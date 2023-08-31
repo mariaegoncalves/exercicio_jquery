@@ -1,34 +1,55 @@
-$(document).ready(function(){
-    const inputBox = $("#input-box")
-    const listContainer = $("#list-container")
+ $(document).ready(function(e){
+    const inputBox = $("#input-box");
+    const listContainer = $("#list-container");
 
     function addTask(){
-        if(inputBox.val === '') {
+        const taskText = inputBox.val().trim();
+        
+        if(taskText === '') {
             alert("Você precisa escrever algo.");
         } else {
-            let li = $("<li>").html(inputBox.val = (''));
+            const li = $("<li>").html(taskText);
+            const span = $("<span>").html("\u00d7");
+
             listContainer.append(li);
-            let span = $("<span>").html("\u00d7");
             li.append(span);
-        }
-        inputBox.val = '';
-        saveData();
-    }
+            inputBox.val('');
+
+            saveData();
+        }   
+    };
 
     listContainer.on("click", "li", function(){
         $(this).toggleClass("checked");
         saveData();
     })
     listContainer.on("click", "span", function(){
-        $(this).parent.remove();
+        $(this).parent().remove();
         saveData();
-    })
+    });
 
     function saveData() {
         localStorage.setItem("data", listContainer.html());
-    }
+    };
 
-    function showTask() {
-        listContainer.html() = localStorage.getItem("data");
-    }
-})
+    // carregar a lista salva do localStorage ao carregar a pagina
+    function loadSavedData() {
+        const savedData = localStorage.getItem("data");
+        if (savedData) {
+            listContainer.html(savedData);
+        }
+    };
+
+    // carregar dados salvos ao iniciar a pagina
+    loadSavedData();
+
+    // lidar com o evento de clique no botão "Add"
+    $("#button").on("click", addTask);
+
+    // tecla Enter pressionada no campo de texto
+    inputBox.keypress(function(event){
+        if (event.which === 13) { // 13 representa a tecla enter
+            addTask()
+        }
+    });
+});
